@@ -558,28 +558,28 @@
       <h2>Get your <em>personalized</em><br/>quote today</h2>
       <p>Tell us a little about yourself and one of our agents will reach out within one business day with a tailored coverage plan and competitive rate.</p>
     </div>
-    <div class="quote-form">
+    <div class="quote-form" id="quoteForm">
       <div class="form-row">
         <div class="field">
           <label>First Name</label>
-          <input type="text" placeholder="Jane"/>
+          <input type="text" id="firstName" placeholder="Jane"/>
         </div>
         <div class="field">
           <label>Last Name</label>
-          <input type="text" placeholder="Smith"/>
+          <input type="text" id="lastName" placeholder="Smith"/>
         </div>
       </div>
       <div class="field">
         <label>Email Address</label>
-        <input type="email" placeholder="jane@example.com"/>
+        <input type="email" id="email" placeholder="jane@example.com"/>
       </div>
       <div class="field">
         <label>Phone Number</label>
-        <input type="tel" placeholder="+1 (555) 000-0000"/>
+        <input type="tel" id="phone" placeholder="+1 (555) 000-0000"/>
       </div>
       <div class="field">
         <label>Coverage Type</label>
-        <select>
+        <select id="coverage">
           <option value="">Select coverage...</option>
           <option>Home Insurance</option>
           <option>Auto Insurance</option>
@@ -588,9 +588,10 @@
           <option>Multiple / Not Sure</option>
         </select>
       </div>
-      <button class="btn-primary" style="margin-top:0.5rem; width:100%; text-align:center;">
+      <button class="btn-primary" id="quoteBtn" onclick="submitQuote()" style="margin-top:0.5rem; width:100%; text-align:center;">
         Request My Quote
       </button>
+      <p id="quoteMsg" style="display:none;text-align:center;font-size:0.85rem;margin-top:0.8rem;"></p>
     </div>
   </div>
 </section>
@@ -688,5 +689,51 @@
   </div>
 </footer>
 
+
+<script>
+async function submitQuote() {
+  const btn = document.getElementById('quoteBtn');
+  const msg = document.getElementById('quoteMsg');
+  const firstName = document.getElementById('firstName').value.trim();
+  const lastName  = document.getElementById('lastName').value.trim();
+  const email     = document.getElementById('email').value.trim();
+  const phone     = document.getElementById('phone').value.trim();
+  const coverage  = document.getElementById('coverage').value;
+
+  if (!firstName || !email) {
+    msg.style.display = 'block';
+    msg.style.color = '#c9a84c';
+    msg.textContent = 'Please enter your name and email.';
+    return;
+  }
+
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/quote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firstName, lastName, email, phone, coverage })
+    });
+
+    if (res.ok) {
+      msg.style.display = 'block';
+      msg.style.color = '#c9a84c';
+      msg.textContent = 'Thank you! An agent will be in touch within one business day.';
+      btn.textContent = 'Request Sent';
+      document.getElementById('quoteForm').querySelectorAll('input, select').forEach(el => el.value = '');
+    } else {
+      throw new Error('Failed');
+    }
+  } catch(e) {
+    msg.style.display = 'block';
+    msg.style.color = '#e8c97a';
+    msg.textContent = 'Something went wrong. Please call us directly.';
+    btn.textContent = 'Request My Quote';
+    btn.disabled = false;
+  }
+}
+</script>
 </body>
 </html>

@@ -1,6 +1,3 @@
-cat /mnt/user-data/outputs/api/quote.js
-Output
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -21,7 +18,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         from: 'Rotko Insurance <onboarding@resend.dev>',
-        to: 'rotkoinsuranceagency@gmail.com',
+        to: 'trevk001@outlook.com',
         subject: `New Quote Request — ${firstName} ${lastName}`,
         html: `
           <div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;background:#0d1f2d;color:#f0eee8;padding:40px;border-radius:8px;">
@@ -67,4 +64,3 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Server error' });
   }
 }
-Done
